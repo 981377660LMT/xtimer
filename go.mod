@@ -8,6 +8,7 @@ require (
 	github.com/gomodule/redigo v1.8.9
 	github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75
 	github.com/panjf2000/ants/v2 v2.6.0
+	github.com/prometheus/client_golang v1.14.0
 	github.com/spaolacci/murmur3 v1.1.0
 	github.com/spf13/viper v1.14.0
 	github.com/swaggo/gin-swagger v1.3.1
@@ -50,7 +51,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
-	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect

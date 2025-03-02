@@ -68,17 +68,22 @@ func (w *Worker) Start(ctx context.Context) error {
 }
 
 func (w *Worker) migrate(ctx context.Context) error {
+	// 获取所有激活状态的定时器
 	timers, err := w.timerDAO.GetTimers(ctx, timerdao.WithStatus(int32(consts.Enabled.ToInt())))
 	if err != nil {
 		return err
 	}
-
+	// 设置时间窗口
 	conf := w.appConfigProvider.Get()
 	now := time.Now()
 	start, end := utils.GetStartHour(now.Add(time.Duration(conf.MigrateStepMinutes)*time.Minute)), utils.GetStartHour(now.Add(2*time.Duration(conf.MigrateStepMinutes)*time.Minute))
+
 	// 迁移可以慢慢来，不着急
+	// 处理每个定时器，根据cron表达式生成具体任务
 	for _, timer := range timers {
+		// 计算在时间窗口内的执行时间点
 		nexts, _ := w.cronParser.NextsBetween(timer.Cron, start, end)
+		// 生成任务并保存到数据库
 		if err := w.timerDAO.BatchCreateRecords(ctx, timer.BatchTasksFromTimer(nexts)); err != nil {
 			log.ErrorContextf(ctx, "migrator batch create records for timer: %d failed, err: %v", timer.ID, err)
 		}
@@ -91,6 +96,7 @@ func (w *Worker) migrate(ctx context.Context) error {
 	// }
 
 	// log.InfoContext(ctx, "migrator batch create db tasks susccess")
+	// 将任务缓存到Redis
 	return w.migrateToCache(ctx, start, end)
 }
 
